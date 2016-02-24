@@ -1,20 +1,21 @@
 var width = window.outerWidth *0.5,
     height = 500;
 
-var button_container = d3.select("#button-container").style("width",window.outerWidth*0.14+"px").style("margin", "10px auto");
-
 query_str="data/imp_exp2111.json";
 
 d3.select(".tooltip").remove();
-d3.select("#map-container").remove();
-d3.select(".canvas").remove();
-d3.select("#unitsTag").remove();
 
 var var_name,
 	num_data,
+  var_name_imp,
+  var_name_exp,
+  num_data_imp,
+  num_data_exp,
 	json_data,
 	jsonArr1=[],
 	jsonArr2=[],
+  jsonArr_imp=[],
+  jsonArr_exp=[],
 	colors,
 	stateData;
 
@@ -22,16 +23,9 @@ var div = d3.select("#container").append("div")
   .attr("class", "tooltip")               
   .style("opacity", 0);
 
-var button_container = d3.select("#button-container").style("width",window.outerWidth*0.14+"px").style("margin", "10px auto");
+var svg = d3.select("#map-container").attr("height",height).attr("id","map-container").attr("class","col-7");
 
-var svg = d3.select("#container").append("svg")
-  .attr("width", width)
-  .attr("height", height)
-  .attr("margin-left",width*0.25)
-  .style("margin", "10px auto")
-  .attr("id","map-container");
-
-var projection = d3.geo.albersUsa().translate([width / 2, height / 2]);
+var projection = d3.geo.albersUsa().translate([width/2+50, height/2]);
 
 var path = d3.geo.path().projection(projection);
 
@@ -42,37 +36,98 @@ queue()
   .await(ready);
 
 function ready(error, map, data, country){
-	var rateById = {};
+
+	  var rateById = {};
     var nameById = {};
 
-    var green_range = [0.1, 1, 10, 100, 1000,10000,100000];
-	var color_green = ['rgb(229,245,224)','rgb(199,233,192)','rgb(161,217,155)','rgb(116,196,118)','rgb(65,171,93)','rgb(35,139,69)','rgb(0,90,50)'];
-	var blue_range = [ 0.1, 1, 10, 100, 1000,10000];
-	var color_blue = ['#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5'];
+  var green_range = [0, 0.1, 1, 10, 100, 1000,10000,100000];
+	var color_green = ['#f7fcf5','#e5f5e0','#c7e9c0','#a1d99b','#74c476','#41ab5d','#238b45','#005a32'];
+	var blue_range = [0, 0.1, 1, 10, 100, 1000,10000,100000];
+	var color_blue = ['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#084594'];
 
 	var data0=data.imports;
-	map_range = blue_range;
+  map_range = blue_range;
 	map_color = color_blue;
 
+
 	d3.selectAll("button").on("click", function(d){
-		variable = d3.select(this).attr("id");
-		if (variable=="exportbutton"){
-			data0 = data.exports;
-			map_range = green_range;
-			map_color = color_green;
-			ready_ready(data0,jsonArr1);
+		  variable = d3.select(this).attr("id");
+		  if (variable=="exportbutton"){
+
+          var_name_imp = data.imports[0];
+          num_data_imp = data.imports.splice(1,data.imports.length-1);
+
+          for (i=0; i < num_data_imp.length;i++){
+            jsonArr_imp.push({
+                GEN_VAL_YR: Number(num_data_imp[i][0]),
+                STATE: num_data_imp[i][1],
+                YEAR: num_data_imp[i][2],
+                NAICS: num_data_imp[i][3],
+                CTY_CODE: num_data_imp[i][4]
+              });
+          };
+
+
+          var_name_exp = data.exports[0];
+          num_data_exp = data.exports.splice(1,data.exports.length-1);
+
+          for (i=0; i < num_data_exp.length;i++){
+             jsonArr_exp.push({
+                  GEN_VAL_YR: Number(num_data_exp[i][0]),
+                 STATE: num_data_exp[i][1],
+                  YEAR: num_data_exp[i][2],
+                 NAICS: num_data_exp[i][3],
+                  CTY_CODE: num_data_exp[i][4]
+              });
+         };
+
+			 data0 = data.exports;
+			 map_range = green_range;
+			 map_color = color_green;
+
+			 ready_ready(data0,jsonArr_imp,data,jsonArr_imp,jsonArr_exp);
+
 		}else if (variable=="importbutton"){
-			data0 = data.imports;
-			map_range = blue_range;
-			map_color = color_blue;	
-			ready_ready(data0,jsonArr2);	
-		}
+
+        var_name_imp = data.imports[0];
+        num_data_imp = data.imports.splice(1,data.imports.length-1);
+
+        for (i=0; i < num_data_imp.length;i++){
+            jsonArr_imp.push({
+                GEN_VAL_YR: Number(num_data_imp[i][0]),
+                STATE: num_data_imp[i][1],
+                YEAR: num_data_imp[i][2],
+                NAICS: num_data_imp[i][3],
+                CTY_CODE: num_data_imp[i][4]
+            });
+        };
+
+        var_name_exp = data.exports[0];
+        num_data_exp = data.exports.splice(1,data.exports.length-1);
+
+        for (i=0; i < num_data_exp.length;i++){
+           jsonArr_exp.push({
+                GEN_VAL_YR: Number(num_data_exp[i][0]),
+                STATE: num_data_exp[i][1],
+                YEAR: num_data_exp[i][2],
+                NAICS: num_data_exp[i][3],
+                CTY_CODE: num_data_exp[i][4]
+            });
+        };
+
+			   data0 = data.imports;
+			   map_range = blue_range;
+			   map_color = color_blue;
+         
+			   ready_ready(data0,jsonArr_exp,data,jsonArr_imp,jsonArr_exp);	
+		};
 	});
 
-function ready_ready(data,jsonArr){
 
-  var_name = data[0];
-  num_data = data.splice(1,data.length-1);
+function ready_ready(data1,jsonArr,data_all,jsonArrImp,jsonArrExp){
+
+  var_name = data1[0];
+  num_data = data1.splice(1,data1.length-1);
 
     for (i=0; i < num_data.length;i++){
       jsonArr.push({
@@ -84,6 +139,8 @@ function ready_ready(data,jsonArr){
       });
     }
     sortedState = jsonArr.map(state).sort(d3.ascending);   // get state name
+
+    console.log(data1.splice(1,data1.length-1));
 
     var stateName;
     stateName=unique(sortedState);
@@ -119,8 +176,7 @@ function ready_ready(data,jsonArr){
   });
 
   //Drawing Choropleth
-var color = d3.scale.linear().domain(map_range)
-    .range(map_color);
+var color = d3.scale.linear().domain(map_range).range(map_color);
 
   state_svg = svg.append("g")
             .attr("class", "region")
@@ -134,94 +190,206 @@ var color = d3.scale.linear().domain(map_range)
             .style("opacity", 1);
 
   state_svg.on("mouseover", function(d) {
-    d3.select(this).transition().duration(300).style("opacity", 1).attr("fill","#fee391");
+                d3.select(this)
+                  .transition().duration(300).style("opacity", 1).attr("fill","#fee391");
 
-    div.transition().duration(300)
-    .style("opacity", 1);
+                div.transition().duration(300)
+                   .style("opacity", 1);
 
-    var million_num = function(x){
-        if (rateById[x]==null){
-          return "0"
-        }else{
-          return rateById[x].toFixed(2)
-        }
-    }
+                var million_num = function(x){
+                  if (rateById[x]==null){
+                      return "0"
+                  }else{
+                      return rateById[x].toFixed(2)
+                  }
+                }
+                div.text(nameById[d.properties.NAME] + " : " + million_num(d.properties.NAME)+"Million")
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY-30) + "px");
+          }).on("mouseout", function() {
+                 d3.select(this)
+                   .transition()
+                   .duration(300)
+                   .style("opacity", 1)
+                   .attr("fill",function(d) {return color(rateById[d.properties.NAME]);});
 
-    div.text(nameById[d.properties.NAME] + " : " + million_num(d.properties.NAME)+"Million")
-    .style("left", (d3.event.pageX) + "px")
-    .style("top", (d3.event.pageY-30) + "px");
-  })
-  .on("mouseout", function() {
-    d3.select(this)
-    .transition().duration(300)
-    .style("opacity", 1).attr("fill",function(d) {return color(rateById[d.properties.NAME]);});
-
-    div.transition().duration(300)
-    .style("opacity", 0);
-  });
+                div.transition()
+                   .duration(300)
+                   .style("opacity", 0);
+          });
 
  // Drawing Choropleth Ends
  // Combine country code in data with country name in country
 
 state_svg.on("click", function(){
 
-    d3.select(".canvas").remove();
-    d3.select("#unitsTag").remove();
-    var margin = {top: 80, right: window.outerWidth *0.25, bottom: 0, left: window.outerWidth *0.25},
+    d3.selectAll("#canvas > svg").remove();
+
+    var margin = {top: 80, right: window.outerWidth *0.25, bottom: 0, left: 100},
         width = window.outerWidth - margin.right-margin.left,
         height = window.outherHeight - margin.top - margin.bottom;
 
-    var state_Country = filterJSON(jsonArr,'STATE',this.id);
-    var sorted_Country = state_Country.map(val).sort(d3.descending);
+    var barchartWidth = window.outerWidth*0.27;
+    var barchartHeight = 260;
 
-    var plot_Country = state_Country.sort(function(a,b){
+  
+    var unitsTag = d3.select("#unitsTag")
+                   .text(this.id)
+                   .attr("float","left")
+                   .style("margin-left","100px");
+                   
+    var units = d3.select("#unitsTag")
+                .append("aside")
+                .attr("id","units")
+                .text("Units: US dollars")
+                .attr("float","right")
+                .style("margin-right","100px");
+
+    var state_Country_imp = filterJSON(jsonArrImp,'STATE',this.id);
+    var sorted_Country_imp = state_Country_imp.map(val).sort(d3.descending);
+
+    var plot_Country_imp = state_Country_imp.sort(function(a,b){
         return d3.descending(val(a),val(b));
     }).splice(0,15);
 
-  var xLength = 25;
+    var state_Country_exp = filterJSON(jsonArrExp,'STATE',this.id);
+    var sorted_Country_exp = state_Country_exp.map(val).sort(d3.descending);
 
-  var yHeight =  d3.scale.linear().domain([Number(allsortedState[allsortedState.length-1]),Number(allsortedState[0])])
-              .range([width*0.5-210,1]);
+    var plot_Country_exp = state_Country_exp.sort(function(a,b){
+        return d3.descending(val(a),val(b));
+    }).splice(0,15);
 
-  var unitsTag = d3.select("#container").append("div")
-                   .attr("id","unitsTag").text(this.id)
-                   .style("width",width+"px")
-                   .style("margin", "2px auto");
-                   
-  var units = d3.select("#unitsTag").append("aside").attr("id","units")
-                .text("Units: US dollars").style("width",width+"px")
-                .style("margin", "1px auto");
+    var allsortedState_imp = jsonArrImp.map(val).sort(d3.ascending); 
+    var allsortedState_exp = jsonArrExp.map(val).sort(d3.ascending); 
+  
+    var x_imp = d3.scale.ordinal()
+            .domain(plot_Country_imp.map(function(d){return countryName(d);}))
+            .range(plot_Country_imp.map(function(d,i){return 25*i+10;}));
 
-  var canvas = d3.select("#container").append("div").attr("class","canvas").style("width",width+"px").style("margin", "2px auto");
+    var x_exp = d3.scale.ordinal()
+            .domain(plot_Country_exp.map(function(d){return countryName(d);}))
+            .range(plot_Country_exp.map(function(d,i){return 25*i+10;}));
+
+    var xAxis_imp = d3.svg.axis().scale(x_imp).orient("bottom");
+
+    var xAxis_exp = d3.svg.axis().scale(x_exp).orient("bottom");
+
+    var xLength = 25;
+
+    var yHeight_imp =  d3.scale
+                   .linear()
+                   .domain([Number(allsortedState_imp[allsortedState_imp.length-1]),Number(allsortedState_imp[0])])
+                   .range([barchartHeight,1]);
+
+    var yHeight_exp = d3.scale
+                   .linear()
+                   .domain([Number(allsortedState_exp[allsortedState_exp.length-1]),Number(allsortedState_exp[0])])
+                   .range([barchartHeight,1]);
+
+    var y_imp = d3.scale.linear()
+            .range([0,barchartHeight-1])
+            .domain([Number(allsortedState_imp[allsortedState_imp.length-1])/(1000000),Number(allsortedState_imp[0])/(1000000)]);
+
+    var y_exp = d3.scale.linear()
+            .range([0,barchartHeight-1])
+            .domain([Number(allsortedState_exp[allsortedState_exp.length-1])/(1000000),Number(allsortedState_exp[0])/(1000000)]);
+
+
+    var yAxis_imp = d3.svg.axis().scale(y_imp).orient("left");
+    var yAxis_exp = d3.svg.axis().scale(y_exp).orient("left");
+
+
+    var canvas = d3.select("#canvas");
  
-  var barchart = canvas.append("div").attr("id","barchart").style("width",width-100 +"px").style("height",height+"px");
+    var barchart_imp = canvas.append("svg")
+                       .attr("id","barchart_imp")
+                       .attr("width",barchartWidth +"px")
+                       .attr("height",barchartHeight+100+"px");
 
-  var ytextchart = canvas.append("div").attr("id","ytextchart").style("width",width-100 +"px");
+    var bar_imp = barchart_imp.selectAll(".bar")
+                              .data(plot_Country_imp).enter()
+                              .append("rect").attr("class","bar_imp")
+                              .attr("x", function(d,i){return 25*i;})
+                              .attr("y", function(d){return y_imp(d.GEN_VAL_YR/(1000000));})
+                              .attr("width", xLength + "px")
+                              .attr("height",function(d) {return barchartHeight-y_imp(d.GEN_VAL_YR/(1000000));})
+                              .attr("transform","translate("+margin.left+","+0+")");
 
-  var ytext = ytextchart.selectAll(".ytext").data(plot_Country).enter().append("div").attr("class","ytext_label").style("width","25px").style("height","27px").append("text").text(function(d) {return countryName(d);});
+    barchart_imp.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(" + margin.left+","+barchartHeight + ")")
+            .call(xAxis_imp)
+            .selectAll("text").style("text-anchor","end")
+            .attr("dx","-.8em")
+            .attr("dy",".15em")
+            .attr("transform","rotate(-65)");
 
-  var bar = barchart.selectAll(".bar")
-            .data(plot_Country).enter().append("div").attr("class","bar")
-            .style("width", xLength + "px")
-            .style("height",function(d) {return yHeight(d.GEN_VAL_YR) +"px";})
+    barchart_imp.append("g")
+            .attr("class", "y axis")
+            .call(yAxis_imp)
+            .attr("transform","translate("+margin.left+","+0+")")
             .append("text")
-            .text(function(d){
-               if (Number(val(d)/1000000000 >1)){
-                 return Number(val(d)/1000000000).toFixed(2) + " billion";
-               }
-               //else if ((Number(val(d)/1000000000) <1) && (Number(val(d)/1000000)>1)){
-               //   return Number(val(d)/1000000).toFixed(0) +" million";
-               //}
-            }).attr("word-break","keep-all");
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Million US dollar");
+
+    var imp_text = barchart_imp.append("text")
+                               .text("Imports")
+                               .attr("x",barchartWidth-100)
+                               .attr("y",20);
+
+    var barchart_exp = canvas.append("svg")
+                             .attr("id","barchart_exp")
+                             .attr("width",barchartWidth+"px")
+                             .attr("height",barchartHeight+100+"px");
+
+    var bar_exp = barchart_exp.selectAll(".bar")
+                              .data(plot_Country_exp).enter()
+                              .append("rect").attr("class","bar_exp")
+                              .attr("x", function(d,i){return 25*i;})
+                              .attr("y", function(d){return y_exp(d.GEN_VAL_YR/(1000000));})
+                              .attr("width", xLength + "px")
+                              .attr("height",function(d) {return barchartHeight-y_exp(d.GEN_VAL_YR/(1000000));})
+                              .attr("transform","translate("+margin.left+","+0+")");
+
+    barchart_exp.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(" + margin.left+","+barchartHeight + ")")
+            .call(xAxis_exp)
+            .selectAll("text").style("text-anchor","end")
+            .attr("dx","-.8em")
+            .attr("dy",".15em")
+            .attr("transform","rotate(-65)");
+
+    barchart_exp.append("g")
+            .attr("class", "y axis")
+            .call(yAxis_exp)
+            .attr("transform","translate("+margin.left+","+0+")")
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Million US dollar");
+
+     var imp_text = barchart_exp.append("text")
+                               .text("Exports")
+                               .attr("x",barchartWidth-100)
+                               .attr("y",20);
+
+
    });
+
 
 
 addColorbar(map_range,map_color);
 
-	function countryName(data) { 
+	function countryName(data2) { 
         for (var indicator in country){
-            if (country[indicator].Code==data.CTY_CODE){
-              return country[indicator].ISO_Code;
+            if (country[indicator].Code==data2.CTY_CODE){
+              return country[indicator].Name;
             }
          }
     };
@@ -260,22 +428,21 @@ function addColorbar(range1,color_range){
 
 d3.select("#svg-color-quant").remove();
 
-var svg = d3.select("#map-container").append("svg").attr("id","svg-color-quant");
+var svg_bar = d3.select("#map-container").append("svg").attr("id","svg-color-quant");
 
 var label_Ordinal = d3.scale.ordinal()
     .domain(range1)
     .range(color_range);
 
-svg.append("g")
-  .attr("class", "legendOrdinal")
-  .attr("transform", "translate(800,350)").attr("id","colorbar_unit");
+svg_bar.append("g")
+   .attr("class", "legendOrdinal")
+   .attr("transform", "translate(850,350)").attr("id","colorbar_unit");
 
 var colorLegend = d3.legend.color()
-    .orient("vertical")
-    .scale(label_Ordinal);
+                    .orient("vertical")
+                    .scale(label_Ordinal);
 
-svg.select(".legendOrdinal")
-  .call(colorLegend);
-
+svg_bar.select(".legendOrdinal")
+   .call(colorLegend);
 
 };
