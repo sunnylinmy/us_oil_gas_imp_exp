@@ -82,18 +82,20 @@ function ready(error, map, data, country){
                   CTY_CODE: num_data_exp[i][4]
               });
          };
-      ready_ready(dataImp,jsonArr_exp,data,jsonArr_imp,jsonArr_exp);  
+      ready_ready(dataImp,jsonArr_imp,data,jsonArr_imp,jsonArr_exp);  
 
 	d3.selectAll("button").on("click", function(d){
 		  variable = d3.select(this).attr("id");
 		  if (variable=="exportbutton"){
 			   map_range = green_range;
 			   map_color = color_green;
-			   ready_ready(dataExp,jsonArr_imp,data,jsonArr_imp,jsonArr_exp);
+         d3.select("#map-container").selectAll("g").remove();
+			   ready_ready(dataExp,jsonArr_exp,data,jsonArr_imp,jsonArr_exp);
 		  }else if (variable=="importbutton"){
 			   map_range = blue_range;
 			   map_color = color_blue;
-			   ready_ready(dataImp,jsonArr_exp,data,jsonArr_imp,jsonArr_exp);	
+         d3.select("#map-container").selectAll("g").remove();
+			   ready_ready(dataImp,jsonArr_imp,data,jsonArr_imp,jsonArr_exp);	
 		  };
 	});
 
@@ -146,6 +148,7 @@ function ready_ready(data1,jsonArr,data_all,jsonArrImp,jsonArrExp){
 
   //Drawing Choropleth
 var color = d3.scale.linear().domain(map_range).range(map_color);
+//console.log(rateById);
 
   state_svg = svg.append("g")
             .attr("class", "region")
@@ -200,7 +203,7 @@ state_svg.on("click", function(){
     d3.selectAll("#canvas > svg").remove();
 
     var margin = {top: 80, right:0, bottom: 0, left: 50},
-   //     width = window.outerWidth - margin.right-margin.left,
+
         height = window.outherHeight - margin.top - margin.bottom;
 
     var barchartWidth = window.outerWidth*0.23;
@@ -424,7 +427,7 @@ function ready2(error,map,data,country){
 
   allsortedState_CImp = ssortedCImp15.map(country_val).sort(d3.descending);
 
-        drawBar(ssortedCImp15,ssCExp15);
+        drawBar(ssortedCImp15,ssCExp15,jsonArrCImp,jsonArrCExp);
 
 var toggle = 1;
 
@@ -434,20 +437,20 @@ d3.select("#importSort").on("click",function(d){
         sssCExp15 = ssCExp15;
         d3.select("#importSort").html("Top 15 Countries by Imports");
         document.getElementById("exportSort").innerHTML = "Exports from Country";
-        drawBar(sssortedCImp15,sssCExp15);
+        drawBar(sssortedCImp15,sssCExp15,jsonArrCImp,jsonArrCExp);
         toggle =1;
     }else if (toggle==1){
         sssortedCExp15 = ssortedCExp15;
         sssCImp15 = ssCImp15;
         document.getElementById("importSort").innerHTML = "Top 15 Countries by Exports";
         document.getElementById("exportSort").innerHTML = "Imports from Country";
-        drawBar(sssortedCExp15,sssCImp15);
+        drawBar(sssortedCExp15,sssCImp15,jsonArrCExp,jsonArrCImp);
         toggle = 0;
     };
 });
 
 
-function drawBar(sortedCImp15,sCExp15){
+function drawBar(sortedCImp15,sCExp15,jsonArr_Imp,jsonArr_Exp){
 
   d3.select("#country-imp-barchart").remove();
   d3.select("#country-exp-barchart").remove();
@@ -455,7 +458,6 @@ function drawBar(sortedCImp15,sCExp15){
 
   // design begin
       var margin = {top: 80, right:0, bottom: 0, left: 50},
-   //     width = window.outerWidth - margin.right-margin.left,
         height = window.outherHeight - margin.top - margin.bottom;
 
     var barchartHeight = document.getElementById("country-import").offsetWidth;
@@ -473,13 +475,18 @@ function drawBar(sortedCImp15,sCExp15){
       var xHeight_imp = d3.scale
                    .linear()
                    .domain([0,Number(allsortedState_CImp[0])])
-                   .range([barchartHeight-2,2]);
+                   .range([barchartHeight-1,1]);
 
       var x_imp = d3.scale.linear()
-            .range([barchartHeight-2,2])
+            .range([barchartHeight-1,1])
             .domain([0,Number(allsortedState_CImp[0])]);
 
       var xAxis_imp = d3.svg.axis().scale(x_imp).orient("top");
+
+      var color_red = ['#fee5d9','#a50f15'];
+      var red_range = [0,30000000000];
+      var colorRed = d3.scale.linear().domain(red_range).range(color_red);
+
 
   // design end
 
@@ -497,7 +504,27 @@ function drawBar(sortedCImp15,sCExp15){
                                             .attr("x", function(d){return x_imp(d.COUNTRY_VAL);})
                                             .attr("height", yLength + "px")
                                             .attr("width",function(d) {return barchartHeight-x_imp(d.COUNTRY_VAL);})
-                                            .attr("transform","translate("+ 0+","+ 40+")");
+                                            .attr("transform","translate("+ 0+","+ 40+")")
+                                            .on("click",function(d){
+                                              var rateByIdCImp_temp = {};
+                                              var jsontemp = filterJSON(jsonArr_Imp,"CTY_CODE",this.id);
+                                              jsontemp.forEach(function(d){
+                                                    rateByIdCImp_temp[d.STATE] = +d.GEN_VAL_YR;
+                                                  }
+                                                );
+                                    
+                                        d3.select("#map-container").selectAll(".region").remove();
+                                        d3.select("#svg-color-quant").remove();
+                                        barSelect = d3.select("html").select("body").select("#row2").select("#map-container").append("g").attr("class","region")
+                                                                .selectAll("path")
+                                                                .data(topojson.feature(map, map.objects.collection).features)
+                                                                .enter().append("path")
+                                                                .attr("d", path)
+                                                                .attr("fill",function(d) {return rateByIdCImp_temp[d.properties.NAME]==null? '#d3d3d3' : colorRed(rateByIdCImp_temp[d.properties.NAME]);})
+                                                                .attr("id",function(d) {
+                                                                            return d.properties.NAME;})
+                                                                .style("opacity", 1);
+                                            });
 
     country_imp_barchart.append("g")
             .attr("class", "y axis")
@@ -511,7 +538,7 @@ function drawBar(sortedCImp15,sCExp15){
 d3.select("#country-name").selectAll("div").data(sortedCImp15).enter().append("div").text(function(d){return getCountryName(d);});
 
   var x_exp = d3.scale.linear()
-                .range([2,barchartHeight-2])
+                .range([1,barchartHeight-1])
                 .domain([0,Number(allsortedState_CImp[0])]);
 
   var xAxis_exp = d3.svg.axis().scale(x_exp).orient("top");
@@ -530,7 +557,25 @@ d3.select("#country-name").selectAll("div").data(sortedCImp15).enter().append("d
                           .attr("x",function(d){return 0;})
                           .attr("height",yLength+"px")
                           .attr("width",function(d){return x_exp(d.COUNTRY_VAL);})
-                          .attr("transform","translate("+ 0+","+ 40+")");
+                          .attr("transform","translate("+ 0+","+ 40+")")
+                          .on("click",function(d){
+                            var rateByIdCImp_temp = {};
+                            var jsontemp = filterJSON(jsonArr_Exp,"CTY_CODE",this.id);
+                            jsontemp.forEach(function(d){
+                                    rateByIdCImp_temp[d.STATE] = +d.GEN_VAL_YR;
+                                  });
+                                     d3.select("#map-container").selectAll(".region").remove();
+                                     d3.select("#svg-color-quant").remove();
+                                    barSelect = d3.select("html").select("body").select("#row2")
+                                                  .select("#map-container").append("g").attr("class","region")
+                                                  .selectAll("path")
+                                                  .data(topojson.feature(map, map.objects.collection).features)
+                                                  .enter().append("path")
+                                                  .attr("d", path)
+                                                  .attr("fill",function(d) {return rateByIdCImp_temp[d.properties.NAME]==null? '#d3d3d3' : colorRed(rateByIdCImp_temp[d.properties.NAME]);})
+                                                  .attr("id",function(d) {return d.properties.NAME;})
+                                                  .style("opacity", 1);
+                                            });
 
     country_exp_barchart.append("g")
             .attr("class", "y axis")
@@ -620,9 +665,7 @@ function getCountryExpData(sortedImp,jsonArrCExp){
         NAICS: arrAdded[0].NAICS,
       });
     };
-    //console.log(arrAdded.length);
   };
-  //console.log(CExp15);
          
   return CExp15;
 };
