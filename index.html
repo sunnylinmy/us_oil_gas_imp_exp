@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <script src='js/d3.min.js' type="text/javascript"></script>
 <script src="http://d3js.org/topojson.v1.min.js" type="text/javascript"></script>
@@ -89,8 +89,12 @@ div.tooltip {
 	float: right;
 }
 
-#barchart{
+#barchart_imp{
 	float: left;
+}
+
+#barchart_exp{
+  float: right;
 }
 
 
@@ -124,6 +128,14 @@ div.tooltip {
   display: inline-block;
 }
 
+#country-container{
+  display: inline;
+  position: absolute;
+}
+
+#row2{
+  display: inline-block;
+}
 #colorbar.tick{
   font-size: 12px;
 }
@@ -154,7 +166,11 @@ h1{
   stroke: white;
 }
 
-.bar:hover {
+.bar_imp:hover {
+  fill: brown;
+}
+
+.bar_exp:hover{
   fill: brown;
 }
 
@@ -173,12 +189,43 @@ h1{
   display: none;
 }
 
-.col-1 {width: 8.33%;}
+#country-import{
+  float: left;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+#country-import.p{
+ float: left;
+ position: static;
+}
+
+
+#country-name{
+  float: left;
+  margin-top: 110px;
+}
+
+#country-name > div{
+  margin-bottom: 6px;
+  margin-left: 5px;
+  text-align: center;
+}
+
+#country-export{
+  float: left; 
+  position: static;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+
+.col-1 {width: 8.33%;display: inline;  position: static;}
 .col-2 {width: 16.66%;}
 .col-3 {width: 25%;}
 .col-4 {width: 33.33%;}
 .col-5 {width: 41.66%;display: inline-block;}
-.col-6 {width: 50%;}
+.col-6 {width: 50%;display: inline-block;}
 .col-7 {width: 58.33%; display: inline-block;}
 .col-8 {width: 66.66%;}
 .col-9 {width: 75%;}
@@ -188,6 +235,39 @@ h1{
 
 #row1{
   display:inline-block;
+}
+
+.bar_country_imp{
+  fill:grey;
+  stroke-width: 1;
+  stroke: white;
+}
+
+.bar_country_imp:hover{
+  fill: brown;
+}
+
+.bar_country_exp{
+  fill:grey;
+  stroke-width: 1;
+  stroke: white;
+}
+
+.bar_country_exp:hover{
+  fill: brown;
+}
+
+#importSort{
+  cursor: pointer;
+}
+
+.region{
+  cursor: pointer;
+}
+
+aside{
+  font-size: .8em;
+  float: right;
 }
 
 </style>
@@ -208,21 +288,33 @@ h1{
 
 <div id="container">
   <div id="row2" class="col-12">
-      <svg id="map-container" class="col-7"></svg>
-      <svg id="country-container" class="col-4"></svg>
+        <div class="col-6">
+        <svg id="map-container" class="col-12"></svg>
+        </div>
+        <div id="country-container" class="col-5">
+            <div id="country-import" class="col-4">
+              <p id="importSort" class="Sort">Top 15 Countries by Imports</p>
+              <aside>Million US Dollar</aside>
+            </div>
+            <div id="country-name" class="col-3"></div>
+            <div id="country-export" class="col-4">
+              <p id="exportSort" class="Sort">Exports to Country</p>
+              <aside>Million US Dollar</aside>
+            </div>
+        </div>
   </div>
-  <div id="row3" class="col-7">
+  <div id="row3col1" class="col-6">
       <div id="unitsTag"></div>
   </div>
-  <div id="row4" class="col-7">
+  <div id="row4" class="col-6">
       <div id="canvas"></div>
   </div>
 </div>
 
 
 <script src='js/d3.min.js' type="text/javascript"></script>
+<script src='js/jquery-1.12.0.min.js' type="text/javascript"></script>
 <script src="http://d3js.org/queue.v1.min.js"></script>
-<script src="http://d3js.org/topojson.v1.min.js"></script>
 <script src='js/colorbrewer.js' type="text/javascript"></script>
 <script src="js/require.js" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/1.8.0/d3-legend.js" type="text/javascript"></script>
