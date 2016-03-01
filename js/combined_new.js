@@ -237,7 +237,7 @@ state_svg.on("click", function(){
     var x_imp = d3.scale.ordinal()
             .domain(plot_State_imp.map(function(d){return getCountryName(d);}))
             .range(plot_State_imp.map(function(d,i){return 25*i+10;}));
-//console.log(plot_State_imp);
+
     var x_exp = d3.scale.ordinal()
             .domain(plot_State_exp.map(function(d){return getCountryName(d);}))
             .range(plot_State_exp.map(function(d,i){return 25*i+10;}));
@@ -706,7 +706,7 @@ d3.select("#country-name").selectAll("div").data(sortedCImp15).enter().append("d
                                                .attr("id",function(d) {
                                                                             return d.properties.NAME;})
                                                 .style("opacity", 1);
-                                              stateSelect.on("click",function(){
+                                stateSelect.on("click",function(){
                                                    d3.selectAll("#canvas > svg").remove();
                                                    var margin = {top: 80, right:0, bottom: 0, left: 50},
                                                        height = window.outherHeight - margin.top - margin.bottom;
