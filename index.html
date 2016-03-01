@@ -141,8 +141,8 @@ div.tooltip {
 }
 
 #country-container{
-  display: inline;
-  position: absolute;
+  display: inline-block;
+  box-sizing: border-box;
 }
 
 #row2{
@@ -232,12 +232,13 @@ h1{
 }
 
 
-.col-1 {width: 8.33%;display: inline;  position: static;}
+.col-1 {width: 8.33%;display: inline;}
 .col-2 {width: 16.66%;}
 .col-3 {width: 25%;}
 .col-4 {width: 33.33%;}
-.col-5 {width: 41.66%;display: inline-block;}
-.col-6 {width: 50%;display: inline-block;}
+.col-5 {/*width: 41.66%;*/ width: 800px;
+  display: inline-block;}
+.col-6 {/*width: 50%*/width: 960px;display: inline-block;}
 .col-7 {width: 58.33%; display: inline-block;}
 .col-8 {width: 66.66%;}
 .col-9 {width: 75%;}
@@ -254,6 +255,7 @@ h1{
   stroke-width: 1;
   stroke: white;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .bar_country_imp:hover{
@@ -265,6 +267,7 @@ h1{
   stroke-width: 1;
   stroke: white;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .bar_country_exp:hover{
@@ -290,6 +293,7 @@ aside{
 
 #text{
   float: right;
+  width: 900px;
   margin-left: 0px;
   box-sizing: border-box;
   padding-right: 140px;
@@ -333,7 +337,7 @@ aside{
   </div>
   <div id="row4" class="col-12">
       <div id="canvas" class="col-6"></div>
-      <div id="text" class="col-6">
+      <div id="text">
         <h3>Instruction</h3>
         <p>Click on "Import" and "Export" button to see total imports and exports for different states on map.
            Click state on map to see the details of each state. Click on "Top 15 Countries by Imports" to re-sort by exports. Click on bars of countries to see the details of each country.</p>
