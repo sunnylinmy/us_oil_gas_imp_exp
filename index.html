@@ -9,6 +9,11 @@
 </head>
 <style type="text/css">
 
+#outer-container{
+  margin: auto;
+  width: 1900px;
+}
+
 #button-container{
 /*    display: block;
     margin: 10px auto;  */
@@ -106,7 +111,7 @@ div.tooltip {
 }
 
 #barchart_exp{
-  float: right;
+  float: left;
 }
 
 
@@ -155,16 +160,6 @@ div.tooltip {
 h1{
   text-align: center;
 }
-
-.q0-9 { fill:rgb(247,251,255); }
-.q1-9 { fill:rgb(222,235,247); }
-.q2-9 { fill:rgb(198,219,239); }
-.q3-9 { fill:rgb(158,202,225); }
-.q4-9 { fill:rgb(107,174,214); }
-.q5-9 { fill:rgb(66,146,198); }
-.q6-9 { fill:rgb(33,113,181); }
-.q7-9 { fill:rgb(8,81,156); }
-.q8-9 { fill:rgb(8,48,107); }
 
 .bar_imp {
   fill: #2171b5;
@@ -236,9 +231,8 @@ h1{
 .col-2 {width: 16.66%;}
 .col-3 {width: 25%;}
 .col-4 {width: 33.33%;}
-.col-5 {/*width: 41.66%;*/ width: 800px;
-  display: inline-block;}
-.col-6 {/*width: 50%*/width: 960px;display: inline-block;}
+.col-5 {width: 41.66%;  display: inline-block;}
+.col-6 {width: 50%; display: inline-block;}
 .col-7 {width: 58.33%; display: inline-block;}
 .col-8 {width: 66.66%;}
 .col-9 {width: 75%;}
@@ -302,7 +296,7 @@ aside{
 </style>
 
 <body>
-
+<div id="outer-container">
 <h1> 2014 United States Oil and Gas Imports & Exports </h1>
 <div id="row1" class="col-12">
   <div id="row1col1" class="col-7">
@@ -344,6 +338,7 @@ aside{
         <h3>About</h3>
         <p> Data used in this data visualization is from <a href="http://www.census.gov/data/developers/data-sets/international-trade.html">the International Trade API on US Census Bureau's website</a>. Oil and gas extraction definition here follows <a href="https://www.census.gov/econ/isp/sampler.php?naicscode=2111#">2012 NAICS: 2111</a>.This visualization was created by Mengyang Lin at the Duke University Energy Initiative using <a href="https://d3js.org/">d3.js</a> and <a href="http://d3-legend.susielu.com/">d3-legend.js</a>.</p>
       </div>
+  </div>
   </div>
 </div>
 

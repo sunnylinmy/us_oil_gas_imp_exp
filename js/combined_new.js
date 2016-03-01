@@ -23,7 +23,7 @@ var div = d3.select("#container").append("div")
 
 var svg = d3.select("#map-container").attr("height",height);
 
-var projection = d3.geo.albersUsa().translate([width/2+50, height/2]);
+var projection = d3.geo.albersUsa().translate([width/2, height/2]).scale(950);
 
 var path = d3.geo.path().projection(projection);
 
