@@ -1160,7 +1160,7 @@ var label_Ordinal = d3.scale.ordinal()
 
 svg_bar.append("g")
    .attr("class", "legendOrdinal")
-   .attr("transform", "translate(830,320)").attr("id","colorbar_unit");
+   .attr("transform", "translate(750,320)").attr("id","colorbar_unit");
 
 var colorLegend = d3.legend.color()
                     .orient("vertical")
