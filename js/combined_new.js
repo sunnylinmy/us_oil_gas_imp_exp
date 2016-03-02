@@ -200,7 +200,7 @@ var color = d3.scale.linear().domain(map_range).range(map_color);
 
         height = window.outherHeight - margin.top - margin.bottom;
 
-    var barchartWidth = 395;
+    var barchartWidth = 420;
     var barchartHeight = 260;
 
   
@@ -361,7 +361,7 @@ state_svg.on("click", function(){
 
         height = window.outherHeight - margin.top - margin.bottom;
 
-    var barchartWidth = 395;
+    var barchartWidth = 420;
     var barchartHeight = 260;
 
   
@@ -683,7 +683,7 @@ function drawBar(sortedCImp15,sCExp15,jsonArr_Imp,jsonArr_Exp){
                                                    d3.selectAll("#canvas > svg").remove();
                                                    var margin = {top: 80, right:0, bottom: 0, left: 50},
                                                        height = window.outherHeight - margin.top - margin.bottom;
-                                                   var barchartWidth = 395;
+                                                   var barchartWidth = 420;
                                                    var barchartHeight = 260;
                                                    var unitsTag = d3.select("#unitsTag")
                                                                   .text(this.id)
@@ -868,7 +868,7 @@ d3.select("#country-name").selectAll("div").data(sortedCImp15).enter().append("d
                                                    d3.selectAll("#canvas > svg").remove();
                                                    var margin = {top: 80, right:0, bottom: 0, left: 50},
                                                        height = window.outherHeight - margin.top - margin.bottom;
-                                                   var barchartWidth = 395;
+                                                   var barchartWidth = 420;
                                                    var barchartHeight = 260;
                                                    var unitsTag = d3.select("#unitsTag")
                                                                   .text(this.id)
